@@ -7,7 +7,7 @@ import pandas as pd
 import csv
 
 
-class ScanTransfer:
+class ScanTransfer(object): # 使用object 是便于后面的方法调用自己内部的方法
     '''
     类功能：
     ------------
