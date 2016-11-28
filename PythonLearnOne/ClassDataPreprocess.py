@@ -3,14 +3,12 @@
 # @file:ClassDataPreprocess.py
 # @time:2016/11/17 11:11
 
-import numpy as np
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.feature_selection import SelectFromModel
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.feature_selection import SelectFromModel
 from sklearn.learning_curve import learning_curve
-import matplotlib.pyplot as plt
-
 
 
 class DataPreprocess:
@@ -18,7 +16,7 @@ class DataPreprocess:
     类功能：
     对DataFrame数据探索处理: 影响因子排序，相关性分析，学习曲线，分类报告，数据分布特点
     '''
-
+    import numpy as np
     def importancePlot(self, dataflag, flag="label", figure=True):
         '''
         输入 dataframe 绘制影响因子排序及图
@@ -145,12 +143,118 @@ class DataPreprocess:
               round(float(count_tp) / float((count_fn + count_tp)), 3))
 
 
+from sklearn.pipeline import FeatureUnion, _fit_one_transformer, _fit_transform_one, _transform_one
+from sklearn.externals.joblib import Parallel, delayed
+from scipy import sparse
+import numpy as np
 
 
+class FeatureUnionExt(FeatureUnion):
+    '''
+    通过继承父类的方法来实现，对不同列的数据进行不同的处理。
+    原始的FeatureUnion只支持对整个DF/Array 进行处理操作。
 
-if __name__ == '__main__':
+    这个算法是以 pipeline 的流水线操作形式
 
-    # 下面是测试使用
-    df = pd.read_csv("D:/project_csm/bigtable_2B_xc_new.csv", sep=',')
-    tst = DataPreprocess()
-    tst.importancePlot(df, "uid_flag", False)
+    原始父类的例子：
+    ------------
+    FeatureUnion(transform_list)
+    where "transform_list"=[("pca",PCA),("K",Kbest)]
+    就是对整个数据集先进行 PCA 降维，在进行 特征选取。注意这两个操作时并行的！
+    不是像pipeline那样串行操作。
+
+    新类主要是通过传入要处理的列的列表，然后单独提取相应的列（可以是多列）做相应的处理
+    （这些处理是并行的），然后再合并处理后的数据，得到相应的处理后的数据.
+
+    注意：
+    ----
+    这种重写以 array 或sparse matrix 形式进行。但是支持 DATA FRAME 形式！
+    因为父类中对 dataframe 会做进一步的处理为可处理的形式。
+
+
+    例子：
+    ----
+    # 新建计算缺失值的对象
+    step1 = ('Imputer', Imputer())
+    # 新建将部分特征矩阵进行定性特征编码的对象
+    step2_1 = ('OneHotEncoder', OneHotEncoder(sparse=False))
+    # 新建将部分特征矩阵进行对数函数转换的对象
+    step2_2 = ('ToLog', FunctionTransformer(log1p))
+    # 新建将部分特征矩阵进行二值化类的对象
+    step2_3 = ('ToBinary', Binarizer())
+    # 新建部分并行处理对象，返回值为每个并行工作的输出的合并
+    step2 = ('FeatureUnionExt', FeatureUnionExt(transformer_list=[step2_1, step2_2, step2_3], idx_list=[[0], [1, 2, 3], [4]]))
+    # 新建无量纲化对象
+    step3 = ('MinMaxScaler', MinMaxScaler())
+    # 新建卡方校验选择特征的对象
+    step4 = ('SelectKBest', SelectKBest(chi2, k=3))
+    # 新建PCA降维的对象
+    step5 = ('PCA', PCA(n_components=2))
+    # 新建逻辑回归的对象，其为待训练的模型作为流水线的最后一步
+    step6 = ('LogisticRegression', LogisticRegression(penalty='l2'))
+    # 新建流水线处理对象
+    # 参数steps为需要流水线处理的对象列表，该列表为二元组列表，第一元为对象的名称，第二元为对象
+    pipeline = Pipeline(steps=[step1, step2, step3, step4, step5, step6])
+
+    df=pd.read_csv()
+    pipeline.fit_transform(df)
+
+    '''
+
+    def __init__(self, transformer_list, idx_list, n_jobs=1, transformer_weights=None):
+        '''
+        :param transformer_list: 做transform操作的方法的列表
+        :param idx_list: 做transform操作的列（注意是列数）的列表
+        :param n_jobs:
+        :param transformer_weights:
+        '''
+        self.idx_list = idx_list  # 新添加的参数用来存储列名或列序列号（注意从0开始）
+        FeatureUnion.__init__(self, transformer_list=transformer_list,
+                              n_jobs=n_jobs, transformer_weights=transformer_weights)
+
+    # fit重构
+    def fit(self, X, y=None):
+
+        # 生成一个 transform list 包含 三部分,处理方法名+处理方法+列名/列号 :
+        # [("pca",PCA,0),("K",Kbest,"colmuns_name")]
+        transformer_idx_list = list(map(lambda trans, idx: (trans[0], trans[1], idx),
+                                        self.transformer_list, self.idx_list))
+        transformers = Parallel(n_jobs=self.n_jobs)(
+            delayed(_fit_one_transformer)(trans, X[:, idx], y) for name, trans, idx in transformer_idx_list)
+        self._update_transformer_list(transformers)
+        return self
+
+    # fit_transform重构
+    def fit_transform(self, X, y=None, **fit_params):
+        transformer_idx_list = map(lambda trans, idx: (trans[0], trans[1], idx), self.transformer_list,
+                                   self.idx_list)
+        result = Parallel(n_jobs=self.n_jobs)(
+
+            delayed(_fit_transform_one)(trans, name, X[:, idx], y,
+                                        self.transformer_weights, **fit_params)
+            for name, trans, idx in transformer_idx_list)
+
+        Xs, transformers = zip(*result)
+        self._update_transformer_list(transformers)
+        if any(sparse.issparse(f) for f in Xs):
+            Xs = sparse.hstack(Xs).tocsr()
+        else:
+            Xs = np.hstack(Xs)
+        return Xs
+
+    # transform重构
+    def transform(self, X):
+        transformer_idx_list = map(lambda trans, idx: (trans[0], trans[1], idx), self.transformer_list,
+                                   self.idx_list)
+        Xs = Parallel(n_jobs=self.n_jobs)(
+
+            delayed(_transform_one)(trans, name, X[:, idx], self.transformer_weights)
+            for name, trans, idx in transformer_idx_list)
+        if any(sparse.issparse(f) for f in Xs):
+            Xs = sparse.hstack(Xs).tocsr()
+        else:
+            Xs = np.hstack(Xs)
+        return Xs
+
+# if __name__ == '__main__':
+#
