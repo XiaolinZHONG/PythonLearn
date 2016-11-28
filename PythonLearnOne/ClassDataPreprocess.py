@@ -226,8 +226,8 @@ class FeatureUnionExt(FeatureUnion):
 
     # fit_transform重构
     def fit_transform(self, X, y=None, **fit_params):
-        transformer_idx_list = map(lambda trans, idx: (trans[0], trans[1], idx), self.transformer_list,
-                                   self.idx_list)
+        transformer_idx_list = list(map(lambda trans, idx: (trans[0], trans[1], idx), self.transformer_list,
+                                   self.idx_list))
         result = Parallel(n_jobs=self.n_jobs)(
 
             delayed(_fit_transform_one)(trans, name, X[:, idx], y,
@@ -244,8 +244,9 @@ class FeatureUnionExt(FeatureUnion):
 
     # transform重构
     def transform(self, X):
-        transformer_idx_list = map(lambda trans, idx: (trans[0], trans[1], idx), self.transformer_list,
-                                   self.idx_list)
+        transformer_idx_list = list(map(lambda trans, idx: (trans[0], trans[1], idx), self.transformer_list,
+                                   self.idx_list))
+
         Xs = Parallel(n_jobs=self.n_jobs)(
 
             delayed(_transform_one)(trans, name, X[:, idx], self.transformer_weights)
