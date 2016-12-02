@@ -4,7 +4,7 @@
 # @time:2016/11/18 15:19
 
 '''
-network.py
+BPNeturalNetworks.py
 ~~~~~~~~~~~~~~~~~~~~~~
 这个模型的宗旨是根据随机梯度下降法制作一个前馈式神经网络
 梯度的计算是通过逆向（BP）传播的方法。
@@ -17,7 +17,7 @@ import numpy as np
 
 class BPNeturalNetworks(object):
     '''
-    这是基于多层感知器的神经网络，其中的内核函数为 sigmod()
+    基于多层感知器的神经网络，内核函数为 sigmod()
     '''
 
     def __init__(self, sizes, epochs, mini_batch_size, eta):
