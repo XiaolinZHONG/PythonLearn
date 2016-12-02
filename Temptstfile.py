@@ -21,9 +21,3 @@
 
 ##################################################
 
-import pandas as pd
-import numpy as np
-df=pd.read_csv("D:/project_csm/bigtable_2B_xc_new.csv",sep=",")
-print(df.head())
-print(df.ix[:6,2])
-print(np.array(df.ix[:5,2]).ravel())
