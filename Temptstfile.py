@@ -20,4 +20,25 @@
 # test_var_args(1)
 
 ##################################################
+from PythonLearnOne.ClassSortAlgorithms import SortAlgorithms
+class tst(SortAlgorithms):
 
+    def __init__(self,tst,data):
+        self.tst=tst
+        self.data=data
+        _value= []
+
+
+
+import numpy as np
+
+b=[[3,2,1],[1,2],[2,2,2]]
+i=[1,2]
+from PythonLearnOne.ClassPythonTools import PythonTools
+
+@PythonTools.timethis
+def t(i):
+    if i in b:
+        print(b.index(i))
+
+t(i)
