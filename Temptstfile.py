@@ -21,24 +21,43 @@
 
 ##################################################
 from PythonLearnOne.ClassSortAlgorithms import SortAlgorithms
+
+
 class tst(SortAlgorithms):
-
-    def __init__(self,tst,data):
-        self.tst=tst
-        self.data=data
-        _value= []
-
+    def __init__(self, tst, data):
+        self.tst = tst
+        self.data = data
+        _value = []
 
 
 import numpy as np
 
-b=[[3,2,1],[1,2],[2,2,2]]
-i=[1,2]
+b = [[3, 2, 1], [1, 2], [2, 2, 2]]
+i = [1, 2]
 from PythonLearnOne.ClassPythonTools import PythonTools
+
 
 @PythonTools.timethis
 def t(i):
     if i in b:
         print(b.index(i))
 
+
 t(i)
+# import os
+#
+# path = os.path.expanduser(r"~/Desktop/dataAnalysis/ctrip/train_data_09.csv")
+# import pandas as pd
+#
+# df = pd.read_csv(path, sep=",")
+#
+# print(df.head())
+
+''' python 默认的路径是 /USER/
+    SPARK 默认的路径是项目的文件夹
+'''
+import pandas as pd
+df2 = pd.read_csv("~/Desktop/dataAnalysis/ctrip/train_data_09.csv", sep=",")
+print(df2.head())
+print("reading data")
+print("hello")

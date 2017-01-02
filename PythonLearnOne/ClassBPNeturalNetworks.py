@@ -180,11 +180,12 @@ def sigmoid_prime(z):
 
 
 
+if __name__ == '__main__':
 
-traing_data = [[[1,2,3],1],
-               [[2,3,4],1],
-               [[0,0,1],0],
-               [[1,1,2],0]]
-tst_data=[[[1,2,3],2]]
-c = BPNeturalNetworks([3, 3,2, 1], 50, 10, 1)
-c.SGD(traing_data,tst_data)
+    traing_data = [[[1,2,3],1],
+                   [[2,3,4],1],
+                   [[0,0,1],0],
+                   [[1,1,2],0]]
+    tst_data=[[[1,2,3],2]]
+    c = BPNeturalNetworks([3, 3,2, 1], 50, 10, 1)
+    c.SGD(traing_data,tst_data)

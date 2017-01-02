@@ -46,6 +46,7 @@ class DataPreprocess:
         print(importa)
 
         modelnew = SelectFromModel(model, prefit=True)
+
         print('建议选取的特征数目:', modelnew.transform(data1).shape[1])
 
         # Plot the feature importances of the forest
