@@ -56,8 +56,5 @@ t(i)
 ''' python 默认的路径是 /USER/
     SPARK 默认的路径是项目的文件夹
 '''
-import pandas as pd
-df2 = pd.read_csv("~/Desktop/dataAnalysis/ctrip/train_data_09.csv", sep=",")
-print(df2.head())
-print("reading data")
-print("hello")
+
+
