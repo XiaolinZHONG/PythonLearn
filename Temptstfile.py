@@ -46,7 +46,7 @@ def t(i):
 t(i)
 # import os
 #
-# path = os.path.expanduser(r"~/Desktop/dataAnalysis/ctrip/train_data_09.csv")
+# path = os.path.expanduser(r"~/Desktop/dataAnalysis/Ctrip/train_data_09.csv")
 # import pandas as pd
 #
 # df = pd.read_csv(path, sep=",")
