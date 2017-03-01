@@ -84,7 +84,7 @@ def statisticAnalysis(trainaddress,testaddress=None,save_address="D:/StatisticAn
 
 if __name__ == '__main__':
 
-    trainaddress="D:/data/flashodermoney3.csv"
-    testaddress="D:/data/flashodermoney3.csv"
-    save_address="D:/data/report.csv"
-    statisticAnalysis(trainaddress)
+    # trainaddress="D:/data/flashodermoney3.csv"
+    # testaddress="D:/data/flashodermoney3.csv"
+    # save_address="D:/data/report.csv"
+    # statisticAnalysis(trainaddress)
