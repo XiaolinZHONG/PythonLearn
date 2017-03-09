@@ -34,6 +34,7 @@ import numpy as np
 
 b = [[3, 2, 1], [1, 2], [2, 2, 2]]
 i = [1, 2]
+
 from PythonLearnOne.ClassPythonTools import PythonTools
 
 
@@ -57,67 +58,12 @@ t(i)
     SPARK 默认的路径是项目的文件夹
 '''
 
-from PythonLearnOne.ClassPythonTools import PythonTools
+# import pip
+# from subprocess import call
+#
+# for dist in pip.get_installed_distributions():
+#     call("pip3 install --upgrade " + dist.project_name,shell=True)
 
-@PythonTools.timethis
-def analysis(trainaddress,testaddress,nullvalue=None):
-    reader = pd.read_csv(trainaddress, sep = ',', iterator = True)
-    chunks = []
-    loop = True
-    i = 1
-    while loop:
-        try:
-            chunk = reader.get_chunk(30000)
-            chunks.append(chunk)
-            print (i)
-            i += 1
-        except StopIteration:
-            loop = False
-            print ('Iteration is stopped.')
-    data = pd.concat(chunks, ignore_index = True)
-    reader2 = pd.read_csv(trainaddress, sep=',', iterator=True)
-    chunks2 = []
-    loop2 = True
-    i2 = 1
-    while loop2:
-        try:
-            chunk2 = reader2.get_chunk(30000)
-            chunks2.append(chunk2)
-            print(i2)
-            i2 += 1
-        except StopIteration:
-            loop2 = False
-            print('Iteration is stopped.')
-    data2 = pd.concat(chunks2, ignore_index=True)
-
-    def nullcount(x):
-        return sum(x.isnull())/len(x)
-    def valuecount(x,value):
-        count=0
-        for i in x:
-            if i==value:
-                count=count+1
-        return count/len(x)
-
-
-    if nullvalue:
-        a = pd.DataFrame(data.apply(lambda x:valuecount(x,nullvalue), axis=0), columns=['rate'])
-        print(a.head())
-        a2 = pd.DataFrame(data2.apply(lambda x: valuecount(x, nullvalue), axis=0), columns=['rate'])
-        print(a2.head())
-    else:
-        a = pd.DataFrame(data.apply(nullcount, axis=0), columns=['rate'])
-        a2 = pd.DataFrame(data2.apply(nullcount, axis=0), columns=['rate'])
-
-    b = data.describe([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).T
-    b2 = data2.describe([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).T
-
-    result=pd.DataFrame()
-    print(b.ix[:,2])
-    for s in range(14):
-        result= pd.concat([result,b.ix[:,s],b2.ix[:,s]],axis=1,join='inner')
-    result=pd.concat([result,a,a2],axis=1,join='inner')
-    result.to_csv("D:/data/report.csv")
-    # print("it's ok")
-    return print("it's ok")
-
+from sklearn import tree
+tr=tree.DecisionTreeClassifier(max_depth=1,max_leaf_nodes=10)
+tr.export_graphviz
