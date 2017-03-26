@@ -9,7 +9,7 @@ from PythonLearnOne.ClassPythonTools import PythonTools
 import numpy as np
 
 @PythonTools.timethis
-def statisticAnalysis(trainaddress,testaddress=None,save_address="~/StatisticAnalysisReport.CSV"):
+def statisticAnalysis2(trainaddress,testaddress=None,save_address="~/StatisticAnalysisReport.CSV"):
 
     #读取数据
     reader = pd.read_csv(trainaddress, sep = ',', iterator = True)
@@ -86,4 +86,4 @@ if __name__ == '__main__':
     # trainaddress="D:/data/flashodermoney3.csv"
     # testaddress="D:/data/flashodermoney3.csv"
     # save_address="D:/data/report.csv"
-    statisticAnalysis()
+    statisticAnalysis2()

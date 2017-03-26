@@ -63,7 +63,7 @@ t(i)
 #
 # for dist in pip.get_installed_distributions():
 #     call("pip3 install --upgrade " + dist.project_name,shell=True)
-
-from sklearn import tree
-tr=tree.DecisionTreeClassifier(max_depth=1,max_leaf_nodes=10)
-tr.export_graphviz
+#
+# from sklearn import tree
+# tr=tree.DecisionTreeClassifier(max_depth=1,max_leaf_nodes=10)
+# tr.export_graphviz
