@@ -67,3 +67,8 @@ t(i)
 # from sklearn import tree
 # tr=tree.DecisionTreeClassifier(max_depth=1,max_leaf_nodes=10)
 # tr.export_graphviz
+
+
+import numpy as np
+
+np.cov()
