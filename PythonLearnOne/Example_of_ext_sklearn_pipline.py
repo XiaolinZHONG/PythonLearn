@@ -11,6 +11,7 @@
 '''
 from sklearn.base import TransformerMixin
 from sklearn.utils import as_float_array
+import numpy as np
 
 class MeanDiscrete(TransformerMixin):
 
