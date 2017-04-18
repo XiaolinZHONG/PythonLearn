@@ -143,6 +143,27 @@ class DataPreprocess:
         print('FN被分为坏的好:', count_fn, 'TP正确分类的好:', count_tp, '好正确率：',
               round(float(count_tp) / float((count_fn + count_tp)), 3))
 
+    def datadescribe(self,data,miss_value=None):
+
+        def valuecount(x):
+            count = 0
+            for i in x:
+                if i == -900 or i == -999 or i == None or i == "NULL" or i == "Null" or np.isnan(i):
+                    count = count + 1
+            return count / len(x)
+
+        # 计算缺失率
+        a = pd.DataFrame(data.apply(lambda x: valuecount(x), axis=0), columns=['miss_rate'])
+
+        # 计算分位数
+        data = data.dropna(how='any')
+        b = data.describe([0.25, 0.5, 0.75, 0.9, 0.95]).T
+
+        print("Calculating the percentile, please wait patiently !")
+
+        result = pd.concat([b, a], axis=1, join='inner')
+        result = result.T
+        return result
 
 from sklearn.pipeline import FeatureUnion, _fit_one_transformer, _fit_transform_one, _transform_one
 from sklearn.externals.joblib import Parallel, delayed

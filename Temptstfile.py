@@ -34,6 +34,7 @@ import numpy as np
 
 b = [[3, 2, 1], [1, 2], [2, 2, 2]]
 i = [1, 2]
+
 from PythonLearnOne.ClassPythonTools import PythonTools
 
 
@@ -46,7 +47,7 @@ def t(i):
 t(i)
 # import os
 #
-# path = os.path.expanduser(r"~/Desktop/dataAnalysis/ctrip/train_data_09.csv")
+# path = os.path.expanduser(r"~/Desktop/dataAnalysis/Ctrip/train_data_09.csv")
 # import pandas as pd
 #
 # df = pd.read_csv(path, sep=",")
@@ -56,8 +57,18 @@ t(i)
 ''' python 默认的路径是 /USER/
     SPARK 默认的路径是项目的文件夹
 '''
-import pandas as pd
-df2 = pd.read_csv("~/Desktop/dataAnalysis/ctrip/train_data_09.csv", sep=",")
-print(df2.head())
-print("reading data")
-print("hello")
+
+# import pip
+# from subprocess import call
+#
+# for dist in pip.get_installed_distributions():
+#     call("pip3 install --upgrade " + dist.project_name,shell=True)
+#
+# from sklearn import tree
+# tr=tree.DecisionTreeClassifier(max_depth=1,max_leaf_nodes=10)
+# tr.export_graphviz
+
+
+import numpy as np
+
+np.cov()
