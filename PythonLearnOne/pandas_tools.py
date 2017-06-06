@@ -59,9 +59,9 @@ class Pandas_tools:
             df.ix[df[sort_a] == value, "pre"] = df[df[sort_a] == value][sort_b].shift(shift_t)
             df.ix[df[sort_a] == value, "days"] = (df['time'] - df['pre']).dt.days
         # print(df)
-        df = df.dropna(how="any") #这里只保存有值的，本来不是最大一天的都会有空置
+        df_new = df.dropna(how="any") #这里只保存有值的，本来不是最大一天的都会有空置
 
-        return df
+        return df_new
 
 
 
