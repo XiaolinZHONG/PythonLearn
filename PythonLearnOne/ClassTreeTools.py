@@ -5,21 +5,22 @@
 # @File   : ClassTreeTools.py
 from sklearn.tree import DecisionTreeClassifier, _tree
 import numpy as np
+from sklearn.base import BaseEstimator,TransformerMixin
 
-class TreeTools:
+class TreeTools(BaseEstimator,TransformerMixin):
     '''
     基于树的工具：决策树分 BIN （最优分 BIN 法）
     '''
     def __init__(self):
         self
 
-    def tree_split_thres(self,x,y):
+    def fit(self,X,y=None):
 
 
         from sklearn import tree
 
         clf = DecisionTreeClassifier(criterion="entropy", max_depth=10, max_leaf_nodes=10)
-        clf.fit(x,y)
+        clf.fit(X,y)
         count_leaf=0
         for i in clf.tree_.children_left:
             if i==_tree.TREE_LEAF:
@@ -44,7 +45,7 @@ class TreeTools:
         return new_threshold_2
 
 
-    def tree_discrete(self,x,threshold):
+    def transform(self,x,threshold):
         '''
         这里调用了 numpy 的 内置函数 searchsorted来实现。
 
@@ -63,10 +64,10 @@ class TreeTools:
                 x_new.append(x.max())
         return x_new
 
-    def tree_split_discrete(self,x,y):
+    def fit_transform(self, X, y=None, **fit_params):
 
         clf = DecisionTreeClassifier(criterion="entropy", max_depth=10, max_leaf_nodes=10)
-        clf.fit(x,y)
+        clf.fit(X,y)
         count_leaf=0
         for i in clf.tree_.children_left:
             if i==_tree.TREE_LEAF:
@@ -88,14 +89,14 @@ class TreeTools:
 
         new_threshold_2=np.sort(new_threshold)
 
-        thres_index = np.asarray(new_threshold_2).searchsorted(x, side='right')  # 注意这里的 right 表示的是<=
+        thres_index = np.asarray(new_threshold_2).searchsorted(X, side='right')  # 注意这里的 right 表示的是<=
         thres_index = thres_index.ravel()
         x_new = []
-        for i in range(len(x)):
+        for i in range(len(X)):
             if thres_index[i] + 1 <= len(new_threshold_2):
                 x_new.append(new_threshold_2[thres_index[i]])
             else:
-                x_new.append(x.max())#这里后面可以修改
+                x_new.append(X.max())#这里后面可以修改
         return x_new # 返回的数值是右侧的等于的值
 
 
