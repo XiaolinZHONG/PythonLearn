@@ -16,7 +16,7 @@ class TreeBinTools(BaseEstimator,TransformerMixin):
         self.X=X
         self.y=y
 
-    def ft_function(self,x):
+    def _ft_function(self,x):
         '''
         
         :param x: 这里输入的 x 是单个特征列
@@ -60,7 +60,7 @@ class TreeBinTools(BaseEstimator,TransformerMixin):
 
     def fit_transform(self, X, y=None, **fit_params):
 
-        X_new=np.apply_along_axis(self.ft_function,0,X)
+        X_new=np.apply_along_axis(self._ft_function,0,X)
         return X_new
 
 
