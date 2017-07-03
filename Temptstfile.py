@@ -72,6 +72,10 @@ t(i)
 # import numpy as np
 #
 # np.cov()
+import numpy as np
+np.log1p
+
+
 
 from keras.models import Sequential
 from keras.layers import Dense,Activation

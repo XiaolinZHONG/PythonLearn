@@ -12,9 +12,58 @@ class TreeBinTools(BaseEstimator,TransformerMixin):
     基于树的工具：决策树分 BIN （最优分 BIN 法）
     '''
     def __init__(self,X,y):
-        self
+
         self.X=X
         self.y=y
+
+    # def _f_function(self,x):
+    #
+    #     clf = DecisionTreeClassifier(criterion="entropy", max_depth=10, max_leaf_nodes=10)
+    #     x = x.reshape(len(x), 1)
+    #     clf.fit(x, self.y)
+    #     count_leaf = 0
+    #     for i in clf.tree_.children_left:
+    #         if i == _tree.TREE_LEAF:
+    #             count_leaf += 1
+    #
+    #
+    #     threshold = clf.tree_.threshold  # 所有的节点全部是<=
+    #     # threshold=np.sort(threshold)[count_leaf:]
+    #     # #这种方式不太好，如果有小于-2的排序就会出问题。
+    #     #  -2的数目和叶子数相同 后面需要排除掉-2的值
+    #     count = 0
+    #     for i in threshold:
+    #         if i == -2: count += 1
+    #
+    #     new_threshold = list(filter(lambda x: x != -2, threshold))
+    #
+    #     if count > count_leaf: new_threshold += [-2]
+    #
+    #     self.new_threshold_2 = np.sort(new_threshold)
+    #     return self.new_threshold_2
+    #
+    # def fit(self,X,y):
+    #     np.apply_along_axis(self._f_function, 0, X)
+    #     return self
+    #
+    # def _t_function(self,x):
+    #     thres_index = np.asarray(self.new_threshold_2).searchsorted(x, side='right')  # 注意这里的 right 表示的是<=
+    #     thres_index = thres_index.ravel()
+    #     x_new = []
+    #     for i in range(len(x)):
+    #         if thres_index[i] + 1 <= len(self.new_threshold_2):
+    #             x_new.append(self.new_threshold_2[thres_index[i]])
+    #         else:
+    #             x_new.append(x.max())  # 这里后面可以修改
+    #     return x_new  # 返回的数值是右侧的等于的值
+    #
+    #
+    # def transform(self,X):
+    #
+    #     X_new = np.apply_along_axis(self._t_function, 0, X)
+    #     return X_new
+    #
+
 
     def _ft_function(self,x):
         '''
@@ -58,12 +107,50 @@ class TreeBinTools(BaseEstimator,TransformerMixin):
         return x_new  # 返回的数值是右侧的等于的值
 
 
+
     def fit_transform(self, X, y=None, **fit_params):
 
         X_new=np.apply_along_axis(self._ft_function,0,X)
         return X_new
 
+class TreeBinDF():
 
+    def __init__(self):
+        self
+    def tree_split_discrete(self,x, y):
+
+        clf = DecisionTreeClassifier(criterion="entropy", max_depth=10, max_leaf_nodes=10)
+        x = x.values.reshape(x.shape[0], 1)
+        clf.fit(x, y)
+        count_leaf = 0
+        for i in clf.tree_.children_left:
+            if i == _tree.TREE_LEAF:
+                count_leaf += 1
+        count_leaf
+
+        threshold = clf.tree_.threshold  # 所有的节点全部是<=
+        # threshold=np.sort(threshold)[count_leaf:]
+        # #这种方式不太好，如果有小于-2的排序就会出问题。
+        #  -2的数目和叶子数相同 后面需要排除掉-2的值
+        count = 0
+        for i in threshold:
+            if i == -2: count += 1
+
+        new_threshold = list(filter(lambda x: x != -2, threshold))
+
+        if count > count_leaf: new_threshold += [-2]
+
+        new_threshold_2 = np.sort(new_threshold)
+
+        thres_index = np.asarray(new_threshold_2).searchsorted(x, side='right')  # 注意这里的 right 表示的是<=
+        thres_index = thres_index.ravel()
+        x_new = []
+        for i in range(len(x)):
+            if thres_index[i] + 1 <= len(new_threshold_2):
+                x_new.append(new_threshold_2[thres_index[i]])
+            else:
+                x_new.append(x.max())  # 这里后面可以修改
+        return x_new  # 返回的数值是右侧的等于的值
 
 if __name__ == '__main__':
     from sklearn.datasets import load_iris
