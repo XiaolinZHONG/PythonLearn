@@ -1,20 +1,21 @@
-
 # -*- coding: utf-8 -*-
 # @Time   : 2017/5/30
 # @Author : XL ZHONG
 # @File   : ClassTreeBinTools.py
 from sklearn.tree import DecisionTreeClassifier, _tree
 import numpy as np
-from sklearn.base import BaseEstimator,TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin
 
-class TreeBinTools(BaseEstimator,TransformerMixin):
+
+class TreeBinTools(BaseEstimator, TransformerMixin):
     '''
     基于树的工具：决策树分 BIN （最优分 BIN 法）
     '''
-    def __init__(self,X,y):
 
-        self.X=X
-        self.y=y
+    def __init__(self, X, y):
+
+        self.X = X
+        self.y = y
 
     # def _f_function(self,x):
     #
@@ -65,14 +66,14 @@ class TreeBinTools(BaseEstimator,TransformerMixin):
     #
 
 
-    def _ft_function(self,x):
+    def _ft_function(self, x):
         '''
         
         :param x: 这里输入的 x 是单个特征列
         :return: 返回处理替换后的特征咧
         '''
         clf = DecisionTreeClassifier(criterion="entropy", max_depth=10, max_leaf_nodes=10)
-        x=x.reshape(len(x),1)
+        x = x.reshape(len(x), 1)
         clf.fit(x, self.y)
         count_leaf = 0
         for i in clf.tree_.children_left:
@@ -94,7 +95,7 @@ class TreeBinTools(BaseEstimator,TransformerMixin):
 
         new_threshold_2 = np.sort(new_threshold)
 
-        print("特征的区间值：",new_threshold_2)
+        print("特征的区间值：", new_threshold_2)
         # 这里是对已经有的区间插入对应的训练数据。
         thres_index = np.asarray(new_threshold_2).searchsorted(x, side='right')  # 注意这里的 right 表示的是<=
         thres_index = thres_index.ravel()
@@ -106,18 +107,17 @@ class TreeBinTools(BaseEstimator,TransformerMixin):
                 x_new.append(x.max())  # 这里后面可以修改
         return x_new  # 返回的数值是右侧的等于的值
 
-
-
     def fit_transform(self, X, y=None, **fit_params):
 
-        X_new=np.apply_along_axis(self._ft_function,0,X)
+        X_new = np.apply_along_axis(self._ft_function, 0, X)
         return X_new
 
-class TreeBinDF():
 
+class TreeBinDF():
     def __init__(self):
         self
-    def tree_split_discrete(self,x, y):
+
+    def tree_split_discrete(self, x, y):
 
         clf = DecisionTreeClassifier(criterion="entropy", max_depth=10, max_leaf_nodes=10)
         x = x.values.reshape(x.shape[0], 1)
@@ -152,31 +152,14 @@ class TreeBinDF():
                 x_new.append(x.max())  # 这里后面可以修改
         return x_new  # 返回的数值是右侧的等于的值
 
+
 if __name__ == '__main__':
     from sklearn.datasets import load_iris
 
     data = load_iris()
     data.keys()
-    X=data["data"][:100]
-    y=data["target"][:100]
-    tree=TreeBinTools(X,y)
-    X_new=tree.fit_transform(X,y)
+    X = data["data"][:100]
+    y = data["target"][:100]
+    tree = TreeBinTools(X, y)
+    X_new = tree.fit_transform(X, y)
     print(X_new)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
