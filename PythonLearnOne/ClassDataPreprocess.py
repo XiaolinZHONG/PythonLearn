@@ -8,7 +8,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_selection import SelectFromModel
-from sklearn.learning_curve import learning_curve
+from sklearn import learning_curve
 
 
 class DataPreprocess:
